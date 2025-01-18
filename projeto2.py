@@ -1,36 +1,42 @@
 import random
 
 class Projeto:
+    # Inicializa um objeto Projeto com os atributos
     def __init__(self, codigo, vagas, nota_minima):
         self.codigo = codigo
         self.vagas = vagas
         self.nota_minima = nota_minima
         self.alunos_selecionados = []
 
+    # Verifica a disponibilidade de vagas conforme a capacidade
     def temVaga(self):
         return len(self.alunos_selecionados) < self.vagas
     
+    # Adiciona um aluno à lista de alunos selecionados
     def adicionaAluno(self, aluno):
         self.alunos_selecionados.append(aluno)
 
+     # Remove um aluno da lista de selecionados, se estiver presente
     def removeAluno(self, aluno):
         if aluno in self.alunos_selecionados:
             self.alunos_selecionados.remove(aluno)
 
+    # Retorna a quantidade atual de alunos alocados ao projeto
     def qtdAlunos(self):
         return len(self.alunos_selecionados)
 
 class Aluno:
+    # Inicializa um objeto Aluno com os atributos
     def __init__(self, nome, nota, preferencias):
         self.nome = nome
         self.nota = nota
         self.preferencias = preferencias
         self.alocado = None
-        self.next_p = 0
 
 def processarLinhaProjeto(linha, projetos):
     linha = linha.strip("()")  # Remove parênteses no início e no fim da linha.
     codigo, vagas, nota_minima = linha.split(", ")  # Divide a linha em três partes com base na vírgula e espaço.
+
     # Adiciona um novo projeto ao dicionário 'projetos' usando o código como chave.
     projetos[codigo.strip()] = Projeto(  
         codigo = codigo.strip(),
@@ -45,6 +51,7 @@ def processarLinhaAluno(linha, alunos):
     preferencias_raw, nota_raw = infos.split(") (")  # Divide as preferências e a nota com base em ") (".
     preferencias = [projeto.strip() for projeto in preferencias_raw.strip("(").split(", ")]  # Remove o "(" inicial, separa projetos por vírgulas e remove espaços extras.
     nota = int(nota_raw.strip(")"))  # Remove o ")" final e converte a nota para inteiro.
+
     # Cria um objeto Aluno e o adiciona à lista 'alunos'.
     alunos[nome] = Aluno(
         nome = nome,
@@ -56,6 +63,7 @@ def lerArquivo(caminho_arquivo):
     projetos = {}  # Inicializa um dicionário vazio para armazenar os projetos.
     alunos = {}  # Inicializa uma lista vazia para armazenar os alunos.
     cont = 0  # Contador para o número de linhas processadas.
+
     with open(caminho_arquivo, 'r') as arquivo:  # Abre o arquivo no modo de leitura.
         for linha in arquivo:  # Itera por cada linha do arquivo.
             linha = linha.strip()  # Remove espaços em branco no início e no fim da linha.
@@ -67,10 +75,11 @@ def lerArquivo(caminho_arquivo):
                 processarLinhaProjeto(linha, projetos)
             elif cont <= 255:  # As linhas de 56 a 255 são processadas como alunos.
                 processarLinhaAluno(linha, alunos)
-    return projetos, alunos  # Retorna os dicionários e projetos e alunos.
+
+    return projetos, alunos  # Retorna os dicionários: projetos e alunos.
 
 def gale_shapley_iterativo(projetos, alunos, num_iteracoes=10):
-    # Filtra os alunos candidatos (com base em suas preferências e notas mínimas dos projetos)
+    # Filtra os alunos candidatos (com base nas notas mínimas dos projetos)
     alunos_candidatos = []
     for aluno in alunos.values():
         for p in aluno.preferencias:
@@ -93,27 +102,32 @@ def gale_shapley_iterativo(projetos, alunos, num_iteracoes=10):
 
         livres = lista_alunos  # Lista de alunos a serem processados
 
+        # Enquanto houver alunos na lista "livres" (ainda não alocados)
         while livres:
-            aluno = livres.pop(0)
+            aluno = livres.pop(0)  # Remove o primeiro aluno da lista "livres" para ser processado
 
+            # O aluno tenta se alocar nos projetos de sua preferência
             for projeto in aluno.preferencias:
-                if aluno.alocado is not None:
+                if aluno.alocado is not None:  # Se o aluno já foi alocado, interrompe o loop de preferências
                     break
 
-                projeto_atual = projetos[projeto]
-                if aluno.nota >= projeto_atual.nota_minima:
-                    if projeto_atual.temVaga():
-                        projeto_atual.adicionaAluno(aluno)
-                        aluno.alocado = projeto_atual.codigo
+                projeto_atual = projetos[projeto]  # Obtém o objeto do projeto correspondente
+                if aluno.nota >= projeto_atual.nota_minima:  # Verifica se o aluno atende à nota mínima do projeto
+
+                    if projeto_atual.temVaga():  # Verifica se o projeto tem vaga disponível
+                        projeto_atual.adicionaAluno(aluno)  # Aloca o aluno no projeto
+                        aluno.alocado = projeto_atual.codigo  # Marca o projeto ao qual o aluno foi alocado
+
                     else:
-                        # Re-alocação forçada
+                        # Se o projeto não tiver vaga, faz uma re-alocação forçada
                         pior_aluno = min(projeto_atual.alunos_selecionados, key=lambda a: a.nota)
-                        if aluno.nota > pior_aluno.nota:
-                            projeto_atual.removeAluno(pior_aluno)
-                            pior_aluno.alocado = None
-                            livres.append(pior_aluno)
-                            projeto_atual.adicionaAluno(aluno)
-                            aluno.alocado = projeto_atual.codigo
+                        # Identifica o aluno com a menor nota no projeto
+                        if aluno.nota > pior_aluno.nota:  # Se o novo aluno tiver nota maior, substitui o pior aluno
+                            projeto_atual.removeAluno(pior_aluno)  # Remove o pior aluno do projeto
+                            pior_aluno.alocado = None  # Marca o aluno como não alocado
+                            livres.append(pior_aluno)  # Coloca o aluno substituído de volta na lista de livres
+                            projeto_atual.adicionaAluno(aluno)  # Aloca o novo aluno no projeto
+                            aluno.alocado = projeto_atual.codigo  # Marca o projeto ao qual o aluno foi alocado
 
         # Exibe o estado do emparelhamento após a iteração
         contador = 0

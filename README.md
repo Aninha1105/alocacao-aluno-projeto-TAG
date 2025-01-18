@@ -5,7 +5,7 @@
 Este projeto aborda o problema de emparelhamento máximo e estável entre alunos e projetos oferecidos por uma universidade. 
 
 - **Projetos**: 55 projetos financiados com até 74 vagas no total. Cada projeto possui requisitos de nota mínima e limitações de vagas.
-- **Alunos**: 200 alunos, em que cada um pode indicar até 3 projetos em ordem de preferência. Suas notas variam de 3 (suficiente) a 5 (excelente).
+- **Alunos**: 200 alunos que podem indicar até 3 projetos em ordem de preferência. Suas notas variam de 3 (suficiente) a 5 (excelente).
 - **Objetivo**: Maximizar o número de projetos realizados e garantir estabilidade no emparelhamento, respeitando os critérios definidos.
 
 ## Solução
@@ -50,7 +50,7 @@ A implementação utiliza uma variação iterativa do algoritmo **Gale-Shapley**
 
 Após a execução de 10 iterações do algoritmo iterativo baseado no Gale-Shapley, o emparelhamento máximo e estável alcançado alocou 56 alunos. Este emparelhamento respeita os limites de vagas de cada projeto e as preferências dos alunos, garantindo a estabilidade na alocação.
 
-### Emparelhamento Final
+### Emparelhamento FMáximo e Estável obtido
 
 - **P1**: ['A2', 'A1']  
 - **P2**: ['A32']  
