@@ -50,7 +50,7 @@ A implementação utiliza uma variação iterativa do algoritmo **Gale-Shapley**
 
 Após a execução de 10 iterações do algoritmo iterativo baseado no Gale-Shapley, o emparelhamento máximo e estável alcançado alocou 56 alunos. Este emparelhamento respeita os limites de vagas de cada projeto e as preferências dos alunos, garantindo a estabilidade na alocação.
 
-### Emparelhamento FMáximo e Estável obtido
+### Emparelhamento Máximo e Estável obtido
 
 - **P1**: ['A2', 'A1']  
 - **P2**: ['A32']  
