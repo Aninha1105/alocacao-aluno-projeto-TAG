@@ -140,7 +140,6 @@ def gale_shapley_iterativo(projetos, alunos, num_iteracoes=10):
     emparelhamento = {projeto.codigo: [a.nome for a in projeto.alunos_selecionados] for projeto in projetos.values()}
     return emparelhamento
 
-
-caminho_arquivo = "proj2-tag.txt"
-projetos, alunos = lerArquivo(caminho_arquivo)
-emparelhamento_maximo_estavel = gale_shapley_iterativo(projetos, alunos)
+caminho_arquivo = "proj2-tag.txt"  # Caminho do arquivo de entrada
+projetos, alunos = lerArquivo(caminho_arquivo)  # Chamada da função lerArquivo()
+emparelhamento = gale_shapley_iterativo(projetos, alunos)  # Chamada da função de emparelhamento gale_shapley_iterativo()
